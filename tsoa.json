@@ -1,0 +1,23 @@
+{
+    "swagger": {
+        "outputDirectory": "./dist",
+        "entryFile": "./src/app.ts",
+        "host": "www@host.com",
+        "basePath": "/user",
+        "securityDefinitions": {
+            "jwt": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    },
+    "routes": {
+        "basePath": "/user",
+        "entryFile": "./src/app.ts",
+        "routesDir": "./src/routes",
+        "middleware": "express",
+        "authenticationModule": "./src/utils/route-security.ts",
+        "middlewareTemplate": "./swagger/custom-template.ts"
+    }
+}

@@ -1,0 +1,789 @@
+{
+	"basePath": "/user",
+	"consumes": [
+		"application/json"
+	],
+	"definitions": {
+		"IServerMessage": {
+			"properties": {
+				"message": {
+					"type": "string"
+				},
+				"isUserError": {
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"message",
+				"isUserError"
+			],
+			"type": "object"
+		},
+		"IUser": {
+			"properties": {
+				"uuid": {
+					"type": "string"
+				},
+				"email": {
+					"type": "string"
+				},
+				"firstName": {
+					"type": "string"
+				},
+				"lastName": {
+					"type": "string"
+				},
+				"phoneNumber": {
+					"type": "string"
+				},
+				"isEmailVerified": {
+					"type": "boolean"
+				},
+				"isPhoneNumberVerified": {
+					"type": "boolean"
+				},
+				"language": {
+					"type": "string"
+				},
+				"mfaType": {
+					"type": "string"
+				},
+				"deleted": {
+					"type": "number",
+					"format": "double"
+				},
+				"createdDate": {
+					"type": "string",
+					"format": "date-time"
+				},
+				"updatedDate": {
+					"type": "string",
+					"format": "date-time"
+				}
+			},
+			"required": [
+				"uuid",
+				"email",
+				"firstName",
+				"lastName",
+				"phoneNumber",
+				"language"
+			],
+			"type": "object"
+		},
+		"IAuthorizationResult": {
+			"properties": {
+				"jwtId": {
+					"type": "string"
+				},
+				"clientName": {
+					"type": "string"
+				},
+				"isAuthenticated": {
+					"type": "boolean"
+				},
+				"rights": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"userUuid": {
+					"type": "string"
+				},
+				"errorCode": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"jwtId",
+				"clientName",
+				"isAuthenticated",
+				"rights",
+				"userUuid",
+				"errorCode"
+			],
+			"type": "object"
+		}
+	},
+	"info": {
+		"title": "api-seed",
+		"version": "0.0.0",
+		"license": {
+			"name": "MIT"
+		}
+	},
+	"paths": {
+		"/monitor": {
+			"get": {
+				"operationId": "GetServerDate",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"type": "object"
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/monitor/clear-tokens": {
+			"post": {
+				"operationId": "ClearExpiredTokens",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": ""
+					}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/initiate-auth": {
+			"post": {
+				"operationId": "InitiateAuthRequest",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"type": "object"
+						},
+						"examples": {
+							"application/json": {
+								"ChallengeName": "SMS_MFA",
+								"Session": "KP-3TjuuG3cikDxCjF2lgd0Mog4--pGTMcfsGNYZBX9u3b99VN7hw3Q7ytz-Ps...",
+								"ChallengeParameters": {
+									"CODE_DELIVERY_DELIVERY_MEDIUM": "SMS",
+									"CODE_DELIVERY_DESTINATION": "+********2321",
+									"USER_ID_FOR_SRP": "b15dsdsdc-5223-440c-ae5e-73sdsdf26"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": ""
+					}
+				},
+				"description": "Initiate login - it may return tokens or a challenge request ",
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "body",
+						"schema": {
+							"properties": {
+								"email": {
+									"type": "string"
+								},
+								"password": {
+									"type": "string"
+								}
+							},
+							"title": "InitiateAuthRequestBody",
+							"type": "object",
+							"required": [
+								"email",
+								"password"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/respond-sms-auth-challenge": {
+			"post": {
+				"operationId": "RespondSMSAuthChallenge",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"type": "object"
+						},
+						"examples": {
+							"application/json": {
+								"RefreshToken": "2g3T0hvZlJES2h2SlFzZ1d5SElRS0RDaU...",
+								"AccessToken": "eyJraWQiOiJOYjhUc2g3T0hvZlJES2h2SlFzZ1d5SElRS0RDaU...",
+								"ExpiresIn": 3600
+							}
+						}
+					},
+					"400": {
+						"description": "Wrong confirmationCode provided"
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "body",
+						"schema": {
+							"properties": {
+								"userId": {
+									"type": "string"
+								},
+								"confirmationCode": {
+									"type": "string"
+								},
+								"session": {
+									"type": "string"
+								}
+							},
+							"title": "RespondSMSAuthChallengeBody",
+							"type": "object",
+							"required": [
+								"userId",
+								"confirmationCode",
+								"session"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/verify-email": {
+			"post": {
+				"operationId": "VerifyUserEmail",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"204": {
+						"description": "",
+						"schema": {
+							"$ref": "#/definitions/IServerMessage"
+						}
+					},
+					"400": {
+						"description": "Wrong email entered"
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "body",
+						"schema": {
+							"properties": {
+								"confirmationCode": {
+									"type": "string"
+								},
+								"email": {
+									"type": "string"
+								}
+							},
+							"title": "VerifyUserEmailBody",
+							"type": "object",
+							"required": [
+								"confirmationCode",
+								"email"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/setup-sms-mfa": {
+			"post": {
+				"operationId": "SetupSmsTOTP",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": ""
+					}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "body",
+						"schema": {
+							"properties": {
+								"enabled": {
+									"type": "boolean"
+								}
+							},
+							"title": "SetupSmsTOTPBody",
+							"type": "object",
+							"required": [
+								"enabled"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/signup": {
+			"post": {
+				"operationId": "SignUp",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"type": "object"
+						},
+						"examples": {
+							"application/json": {
+								"uuid": "abc-34f-334-3434"
+							}
+						}
+					}
+				},
+				"description": "Signup for user account.  ",
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "body",
+						"schema": {
+							"properties": {
+								"email": {
+									"type": "string"
+								},
+								"password": {
+									"type": "string"
+								},
+								"firstName": {
+									"type": "string"
+								},
+								"lastName": {
+									"type": "string"
+								},
+								"language": {
+									"type": "string"
+								},
+								"phoneNumber": {
+									"type": "string"
+								}
+							},
+							"title": "SignUpBody",
+							"type": "object",
+							"required": [
+								"email",
+								"password",
+								"firstName",
+								"lastName",
+								"language",
+								"phoneNumber"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/": {
+			"get": {
+				"operationId": "GetUser",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"$ref": "#/definitions/IUser"
+						},
+						"examples": {
+							"application/json": {
+								"uuid": "d2496da2-b2fd-4c98-9146-5fbd7bf6beca",
+								"email": "pg@gmail.com",
+								"firstName": "John",
+								"lastName": "Doe",
+								"isEmailVerified": true,
+								"isPhoneNumberVerified": false,
+								"phoneNumber": "+44772989823989",
+								"language": "en-GB",
+								"mfaType": "none",
+								"createdDate": "2018-08-01T08:54:43.000Z",
+								"updatedDate": "2018-08-01T09:30:44.000Z"
+							}
+						}
+					}
+				},
+				"description": "Get user ",
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			},
+			"patch": {
+				"operationId": "UpdateUser",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "",
+						"schema": {
+							"type": "object"
+						}
+					}
+				},
+				"description": "Update user - limited properties only ",
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "user",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/IUser"
+						}
+					}
+				]
+			}
+		},
+		"/user-rights": {
+			"get": {
+				"operationId": "ValidateToken",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"$ref": "#/definitions/IAuthorizationResult"
+						},
+						"examples": {
+							"application/json": {
+								"isAuthenticated": true,
+								"clientName": "Portal",
+								"userUuid": "d2496da2-b2fd-4c98-9146-5fbd7bf6beca",
+								"jwtId": "5bc2934c-b77a-4135-b238-ae12fe67a087",
+								"rights": [
+									"companyAdmin"
+								]
+							}
+						}
+					}
+				},
+				"description": "Get user rights ",
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/sign-out": {
+			"post": {
+				"operationId": "Signout",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": ""
+					}
+				},
+				"description": "Signouts user and blacklists token ",
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/forgot-password": {
+			"post": {
+				"operationId": "ForgotPassword",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "",
+						"schema": {
+							"$ref": "#/definitions/IServerMessage"
+						}
+					}
+				},
+				"description": "Request a new password via email ",
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "body",
+						"schema": {
+							"properties": {
+								"email": {
+									"type": "string"
+								}
+							},
+							"title": "ForgotPasswordBody",
+							"type": "object",
+							"required": [
+								"email"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/confirm-forgot-password": {
+			"post": {
+				"operationId": "ConfirmForgotPassword",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "",
+						"schema": {
+							"$ref": "#/definitions/IServerMessage"
+						}
+					}
+				},
+				"description": "Enter a new password by providing code, email and new password ",
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "body",
+						"schema": {
+							"properties": {
+								"email": {
+									"type": "string"
+								},
+								"password": {
+									"type": "string"
+								},
+								"code": {
+									"type": "string"
+								}
+							},
+							"title": "ConfirmForgotPasswordBody",
+							"type": "object",
+							"required": [
+								"email",
+								"password",
+								"code"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/refresh-token": {
+			"post": {
+				"operationId": "RefreshToken",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"schema": {
+							"type": "object"
+						},
+						"examples": {
+							"application/json": {
+								"AccessToken": "GdfHRDabc34f3343434..."
+							}
+						}
+					}
+				},
+				"description": "Refresh access token using refresh token, access token that is not blacklisted and less than 2 hours old ",
+				"security": [],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"in": "body",
+						"name": "body",
+						"schema": {
+							"properties": {
+								"refreshToken": {
+									"type": "string"
+								}
+							},
+							"title": "RefreshTokenBody",
+							"type": "object",
+							"required": [
+								"refreshToken"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/change-password": {
+			"post": {
+				"operationId": "ChangePassword",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "",
+						"schema": {
+							"$ref": "#/definitions/IServerMessage"
+						}
+					}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "body",
+						"schema": {
+							"properties": {
+								"proposedPassword": {
+									"type": "string"
+								},
+								"previousPassword": {
+									"type": "string"
+								}
+							},
+							"title": "ChangePasswordBody",
+							"type": "object",
+							"required": [
+								"proposedPassword",
+								"previousPassword"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/resend-confirmation-code": {
+			"post": {
+				"operationId": "ResendConfirmationCode",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "",
+						"schema": {
+							"$ref": "#/definitions/IServerMessage"
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "body",
+						"schema": {
+							"properties": {
+								"email": {
+									"type": "string"
+								}
+							},
+							"title": "ResendConfirmationCodeBody",
+							"type": "object",
+							"required": [
+								"email"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/auth/validate-token": {
+			"post": {
+				"operationId": "ValidateToken",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "",
+						"schema": {
+							"$ref": "#/definitions/IAuthorizationResult"
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/log": {
+			"post": {
+				"operationId": "Log",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"204": {
+						"description": ""
+					}
+				},
+				"description": "Log body to server logs, typically used by UI components ",
+				"security": [],
+				"parameters": [
+					{
+						"in": "body",
+						"name": "body",
+						"required": true,
+						"schema": {
+							"type": "object"
+						}
+					},
+					{
+						"in": "query",
+						"name": "level",
+						"required": true,
+						"type": "string"
+					}
+				]
+			}
+		}
+	},
+	"produces": [
+		"application/json"
+	],
+	"swagger": "2.0",
+	"securityDefinitions": {
+		"jwt": {
+			"type": "apiKey",
+			"name": "Authorization",
+			"in": "header"
+		}
+	},
+	"host": "www@host.com"
+}

@@ -1,0 +1,103 @@
+{
+    "PoolName": "api-seed",
+    "Policies": {
+        "PasswordPolicy": {
+            "MinimumLength": 8,
+            "RequireUppercase": true,
+            "RequireLowercase": true,
+            "RequireNumbers": true,
+            "RequireSymbols": true
+        }
+    },
+    "LambdaConfig": {},
+    "AutoVerifiedAttributes": [
+        "email"
+    ],
+    "UsernameAttributes": [
+        "email"
+    ],
+    "SmsVerificationMessage": "Your verification code is {####}. ",
+    "EmailVerificationMessage": "NOT USED {####}",
+    "EmailVerificationSubject": "NOT USED",
+    "VerificationMessageTemplate": {
+        "SmsMessage": "Your verification code is {####}. ",
+        "EmailMessage": "NOT USED {####}",
+        "EmailSubject": "NOT USED",
+        "EmailMessageByLink": "NOT USED {##Verify Email##}",
+        "EmailSubjectByLink": "NOT USED",
+        "DefaultEmailOption": "CONFIRM_WITH_CODE"
+    },
+    "SmsAuthenticationMessage": "Your authentication code is {####}. ",
+    "MfaConfiguration": "OPTIONAL",
+    "EmailConfiguration": {},
+    "UserPoolTags": {},
+    "AdminCreateUserConfig": {
+        "AllowAdminCreateUserOnly": false,
+        "UnusedAccountValidityDays": 7,
+        "InviteMessageTemplate": {
+            "SMSMessage": "Your username is {username} and temporary password is {####}. ",
+            "EmailMessage": "Your username is {username} and temporary password is {####}. ",
+            "EmailSubject": "Your temporary password"
+        }
+    },
+    "Schema": [
+        {
+            "Name": "language",
+            "AttributeDataType": "String",
+            "DeveloperOnlyAttribute": false,
+            "Mutable": true,
+            "Required": false,
+            "StringAttributeConstraints": {
+                "MinLength": "0",
+                "MaxLength": "10"
+            }
+        },
+        {
+            "Name": "phone_number",
+            "AttributeDataType": "String",
+            "DeveloperOnlyAttribute": false,
+            "Mutable": true,
+            "Required": true,
+            "StringAttributeConstraints": {
+                "MinLength": "0",
+                "MaxLength": "2048"
+            }
+        },
+        {
+            "Name": "family_name",
+            "AttributeDataType": "String",
+            "DeveloperOnlyAttribute": false,
+            "Mutable": true,
+            "Required": false,
+            "StringAttributeConstraints": {
+                "MinLength": "0",
+                "MaxLength": "50"
+            }
+        },
+        {
+            "Name": "given_name",
+            "AttributeDataType": "String",
+            "DeveloperOnlyAttribute": false,
+            "Mutable": true,
+            "Required": false,
+            "StringAttributeConstraints": {
+                "MinLength": "0",
+                "MaxLength": "50"
+            }
+        },
+        {
+            "Name": "email",
+            "AttributeDataType": "String",
+            "DeveloperOnlyAttribute": false,
+            "Mutable": true,
+            "Required": true,
+            "StringAttributeConstraints": {
+                "MinLength": "0",
+                "MaxLength": "2048"
+            }
+        }
+    ],
+    "UserPoolAddOns": {
+        "AdvancedSecurityMode": "OFF"
+    }
+}

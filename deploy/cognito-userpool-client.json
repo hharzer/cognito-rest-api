@@ -1,0 +1,17 @@
+{
+    "UserPoolId": "?",
+    "ClientName": "?",
+    "GenerateSecret": false,
+    "RefreshTokenValidity": 1,
+    "WriteAttributes": [
+        "email",
+        "phone_number",
+        "family_name",
+        "given_name",
+        "custom:language"
+    ],
+    "ExplicitAuthFlows": [
+        "ADMIN_NO_SRP_AUTH",
+        "USER_PASSWORD_AUTH"
+    ]
+}
